@@ -1,0 +1,61 @@
+{
+  "name": "seoul-weather-server",
+  "instructions": null,
+  "fastmcp_version": "2.11.3",
+  "mcp_version": "1.13.1",
+  "server_version": null,
+  "tools": [
+    {
+      "key": "get_seoul_weather",
+      "name": "get_seoul_weather",
+      "description": "서울의 현재 날씨 정보를 가져옵니다.",
+      "input_schema": {
+        "properties": {},
+        "type": "object"
+      },
+      "annotations": null,
+      "tags": null,
+      "enabled": true
+    },
+    {
+      "key": "get_seoul_forecast",
+      "name": "get_seoul_forecast",
+      "description": "서울의 5일 날씨 예보를 가져옵니다.",
+      "input_schema": {
+        "properties": {},
+        "type": "object"
+      },
+      "annotations": null,
+      "tags": null,
+      "enabled": true
+    },
+    {
+      "key": "get_weather_tip",
+      "name": "get_weather_tip",
+      "description": "현재 날씨에 맞는 생활 팁을 제공합니다.",
+      "input_schema": {
+        "properties": {},
+        "type": "object"
+      },
+      "annotations": null,
+      "tags": null,
+      "enabled": true
+    }
+  ],
+  "prompts": [],
+  "resources": [],
+  "templates": [],
+  "capabilities": {
+    "tools": {
+      "listChanged": true
+    },
+    "resources": {
+      "subscribe": false,
+      "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "logging": {}
+  }
+}
