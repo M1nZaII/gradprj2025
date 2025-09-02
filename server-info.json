@@ -1,164 +1,336 @@
 {
-  "name": "afl-plus-plus-server",
-  "instructions": null,
+  "name": "afl-plus-plus-hybrid-server",
+  "instructions": "AFL++ 퍼징을 위한 하이브리드 MCP 서버입니다. 원격 서버에서 로컬 에이전트와 통신하여 AFL++ 퍼징을 제어합니다.",
   "fastmcp_version": "2.11.3",
   "mcp_version": "1.13.1",
-  "server_version": null,
+  "server_version": "2.0.0",
   "tools": [
     {
-      "key": "start_afl_fuzzing",
-      "name": "start_afl_fuzzing",
-      "description": "AFL++ 퍼징을 시작합니다.",
+      "key": "install_local_agent_to_client",
+      "name": "install_local_agent_to_client",
+      "description": "클라이언트 환경에 로컬 에이전트를 자동으로 설치합니다.",
       "input_schema": {
+        "type": "object",
+        "properties": {
+          "agent_name": {
+            "title": "Agent Name",
+            "type": "string",
+            "description": "설치할 에이전트의 이름 (선택사항, 자동 생성됨)"
+          },
+          "install_dir": {
+            "title": "Install Directory",
+            "type": "string",
+            "description": "에이전트를 설치할 디렉토리 (선택사항, 자동 생성됨)"
+          }
+        },
+        "description": "클라이언트의 환경을 자동으로 감지하여 적합한 로컬 에이전트를 설치합니다."
+      },
+      "annotations": null,
+      "tags": ["agent", "installation", "automation"],
+      "enabled": true
+    },
+    {
+      "key": "get_agent_install_guide",
+      "name": "get_agent_install_guide",
+      "description": "특정 플랫폼용 에이전트 설치 가이드를 제공합니다.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "platform": {
+            "title": "Platform",
+            "type": "string",
+            "description": "플랫폼 (linux, darwin, win32, auto, 선택사항, 자동 감지됨)"
+          }
+        },
+        "description": "Linux, macOS, Windows 환경별 상세한 설치 가이드를 제공합니다."
+      },
+      "annotations": null,
+      "tags": ["agent", "guide", "documentation"],
+      "enabled": true
+    },
+    {
+      "key": "generate_local_agent",
+      "name": "generate_local_agent",
+      "description": "로컬 에이전트를 자동으로 생성합니다.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "agent_name": {
+            "title": "Agent Name",
+            "type": "string",
+            "description": "생성할 에이전트의 이름 (선택사항, 자동 생성됨)"
+          },
+          "platform": {
+            "title": "Platform",
+            "type": "string",
+            "description": "플랫폼 (linux, darwin, windows, 선택사항, 자동 감지됨)"
+          },
+          "output_dir": {
+            "title": "Output Directory",
+            "type": "string",
+            "description": "에이전트를 생성할 디렉토리 (선택사항, 자동 생성됨)"
+          }
+        },
+        "description": "Linux, macOS, Windows용 AFL++ 로컬 에이전트를 자동으로 생성합니다."
+      },
+      "annotations": null,
+      "tags": ["agent", "generation", "automation"],
+      "enabled": true
+    },
+    {
+      "key": "list_available_agents",
+      "name": "list_available_agents",
+      "description": "사용 가능한 로컬 에이전트 목록을 반환합니다.",
+      "input_schema": {
+        "type": "object",
+        "properties": {},
+        "description": "에이전트 목록을 조회합니다."
+      },
+      "annotations": null,
+      "tags": ["agent", "management"],
+      "enabled": true
+    },
+    {
+      "key": "register_local_agent",
+      "name": "register_local_agent",
+      "description": "로컬 에이전트를 등록합니다.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "agent_id": {
+            "title": "Agent ID",
+            "type": "string",
+            "description": "등록할 에이전트의 고유 ID"
+          },
+          "agent_info": {
+            "title": "Agent Info",
+            "type": "string",
+            "description": "에이전트 정보 (JSON 문자열, 선택사항)"
+          }
+        },
+        "required": ["agent_id"],
+        "description": "로컬 에이전트를 서버에 등록합니다."
+      },
+      "annotations": null,
+      "tags": ["agent", "management"],
+      "enabled": true
+    },
+    {
+      "key": "unregister_local_agent",
+      "name": "unregister_local_agent",
+      "description": "로컬 에이전트를 제거합니다.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "agent_id": {
+            "title": "Agent ID",
+            "type": "string",
+            "description": "제거할 에이전트의 ID"
+          }
+        },
+        "required": ["agent_id"],
+        "description": "등록된 로컬 에이전트를 서버에서 제거합니다."
+      },
+      "annotations": null,
+      "tags": ["agent", "management"],
+      "enabled": true
+    },
+    {
+      "key": "start_hybrid_fuzzing",
+      "name": "start_hybrid_fuzzing",
+      "description": "하이브리드 AFL++ 퍼징을 시작합니다.",
+      "input_schema": {
+        "type": "object",
         "properties": {
           "target_binary": {
             "title": "Target Binary",
-            "type": "string"
+            "type": "string",
+            "description": "퍼징할 타겟 바이너리 파일 경로"
           },
           "input_dir": {
-            "title": "Input Dir",
-            "type": "string"
+            "title": "Input Directory",
+            "type": "string",
+            "description": "퍼징 입력 파일들이 있는 디렉토리 경로"
           },
           "output_dir": {
-            "default": null,
-            "title": "Output Dir",
-            "type": "string"
-          }
-        },
-        "required": [
-          "target_binary",
-          "input_dir"
-        ],
-        "type": "object"
-      },
-      "annotations": null,
-      "tags": null,
-      "enabled": true
-    },
-    {
-      "key": "get_fuzzing_status",
-      "name": "get_fuzzing_status",
-      "description": "현재 퍼징 상태를 확인합니다.",
-      "input_schema": {
-        "properties": {
-          "output_dir": {
-            "title": "Output Dir",
-            "type": "string"
-          }
-        },
-        "required": [
-          "output_dir"
-        ],
-        "type": "object"
-      },
-      "annotations": null,
-      "tags": null,
-      "enabled": true
-    },
-    {
-      "key": "analyze_fuzzing_results",
-      "name": "analyze_fuzzing_results",
-      "description": "퍼징 결과를 분석합니다.",
-      "input_schema": {
-        "properties": {
-          "output_dir": {
-            "title": "Output Dir",
-            "type": "string"
-          }
-        },
-        "required": [
-          "output_dir"
-        ],
-        "type": "object"
-      },
-      "annotations": null,
-      "tags": null,
-      "enabled": true
-    },
-    {
-      "key": "analyze_crash_file",
-      "name": "analyze_crash_file",
-      "description": "특정 크래시 파일을 분석합니다.",
-      "input_schema": {
-        "properties": {
-          "output_dir": {
-            "title": "Output Dir",
-            "type": "string"
+            "title": "Output Directory",
+            "type": "string",
+            "description": "퍼징 결과를 저장할 디렉토리 경로 (선택사항)"
           },
-          "crash_id": {
-            "title": "Crash Id",
-            "type": "string"
+          "agent_id": {
+            "title": "Agent ID",
+            "type": "string",
+            "description": "사용할 에이전트 ID (선택사항, 자동 선택됨)"
           }
         },
-        "required": [
-          "output_dir",
-          "crash_id"
-        ],
-        "type": "object"
+        "required": ["target_binary", "input_dir"],
+        "description": "로컬 에이전트를 통해 AFL++ 퍼징을 시작합니다."
       },
       "annotations": null,
-      "tags": null,
+      "tags": ["fuzzing", "afl"],
       "enabled": true
     },
     {
-      "key": "reproduce_crash",
-      "name": "reproduce_crash",
-      "description": "크래시를 재현합니다.",
+      "key": "get_hybrid_fuzzing_status",
+      "name": "get_hybrid_fuzzing_status",
+      "description": "하이브리드 퍼징 상태를 확인합니다.",
       "input_schema": {
+        "type": "object",
         "properties": {
-          "target_binary": {
-            "title": "Target Binary",
-            "type": "string"
-          },
-          "crash_file": {
-            "title": "Crash File",
-            "type": "string"
+          "session_id": {
+            "title": "Session ID",
+            "type": "string",
+            "description": "확인할 퍼징 세션의 ID"
           }
         },
-        "required": [
-          "target_binary",
-          "crash_file"
-        ],
-        "type": "object"
+        "required": ["session_id"],
+        "description": "특정 퍼징 세션의 현재 상태와 진행 상황을 확인합니다."
       },
       "annotations": null,
-      "tags": null,
+      "tags": ["fuzzing", "monitoring"],
       "enabled": true
     },
     {
-      "key": "stop_fuzzing",
-      "name": "stop_fuzzing",
-      "description": "퍼징을 중지합니다.",
+      "key": "list_fuzzing_sessions",
+      "name": "list_fuzzing_sessions",
+      "description": "모든 퍼징 세션 목록을 반환합니다.",
       "input_schema": {
-        "properties": {
-          "process_id": {
-            "default": null,
-            "title": "Process Id",
-            "type": "integer"
-          }
-        },
-        "type": "object"
-      },
-      "annotations": null,
-      "tags": null,
-      "enabled": true
-    },
-    {
-      "key": "list_fuzzing_processes",
-      "name": "list_fuzzing_processes",
-      "description": "현재 실행 중인 AFL++ 프로세스를 나열합니다.",
-      "input_schema": {
+        "type": "object",
         "properties": {},
-        "type": "object"
+        "description": "현재 등록된 모든 퍼징 세션의 목록을 조회합니다."
       },
       "annotations": null,
-      "tags": null,
+      "tags": ["fuzzing", "monitoring"],
+      "enabled": true
+    },
+    {
+      "key": "stop_hybrid_fuzzing",
+      "name": "stop_hybrid_fuzzing",
+      "description": "하이브리드 퍼징을 중지합니다.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "session_id": {
+            "title": "Session ID",
+            "type": "string",
+            "description": "중지할 퍼징 세션의 ID"
+          }
+        },
+        "required": ["session_id"],
+        "description": "실행 중인 퍼징 세션을 안전하게 중지합니다."
+      },
+      "annotations": null,
+      "tags": ["fuzzing", "control"],
+      "enabled": true
+    },
+    {
+      "key": "cleanup_fuzzing_session",
+      "name": "cleanup_fuzzing_session",
+      "description": "퍼징 세션을 정리합니다.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "session_id": {
+            "title": "Session ID",
+            "type": "string",
+            "description": "정리할 퍼징 세션의 ID"
+          }
+        },
+        "required": ["session_id"],
+        "description": "완료되거나 중지된 퍼징 세션을 정리합니다."
+      },
+      "annotations": null,
+      "tags": ["fuzzing", "cleanup"],
+      "enabled": true
+    },
+    {
+      "key": "get_system_status",
+      "name": "get_system_status",
+      "description": "시스템 전체 상태를 확인합니다.",
+      "input_schema": {
+        "type": "object",
+        "properties": {},
+        "description": "서버의 전체 상태, 등록된 에이전트, 퍼징 세션 등을 종합적으로 확인합니다."
+      },
+      "annotations": null,
+      "tags": ["system", "monitoring"],
       "enabled": true
     }
   ],
-  "prompts": [],
-  "resources": [],
-  "templates": [],
+  "prompts": [
+    {
+      "name": "로컬 에이전트 자동 설치",
+      "description": "클라이언트 환경에 로컬 에이전트를 자동으로 설치하는 프롬프트",
+      "messages": [
+        {
+          "role": "user",
+          "content": "현재 환경에 맞는 AFL++ 로컬 에이전트를 자동으로 설치해주세요."
+        }
+      ]
+    },
+    {
+      "name": "플랫폼별 설치 가이드",
+      "description": "특정 플랫폼용 설치 가이드를 제공하는 프롬프트",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Linux 환경에서 AFL++ 로컬 에이전트를 설치하는 방법을 알려주세요."
+        }
+      ]
+    },
+    {
+      "name": "하이브리드 AFL++ 퍼징 시작",
+      "description": "AFL++ 퍼징을 시작하는 프롬프트",
+      "messages": [
+        {
+          "role": "user",
+          "content": "AFL++ 퍼징을 시작하고 싶습니다. 먼저 사용 가능한 에이전트를 확인하고, 퍼징을 시작해주세요."
+        }
+      ]
+    },
+    {
+      "name": "퍼징 상태 모니터링",
+      "description": "퍼징 진행 상황을 모니터링하는 프롬프트",
+      "messages": [
+        {
+          "role": "user",
+          "content": "현재 실행 중인 퍼징 세션들의 상태를 확인하고, 특정 세션의 상세 정보를 보여주세요."
+        }
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "name": "afl-plus-plus-documentation",
+      "description": "AFL++ 공식 문서 및 사용법",
+      "uri": "https://github.com/AFLplusplus/AFLplusplus"
+    },
+    {
+      "name": "hybrid-architecture-guide",
+      "description": "하이브리드 MCP 서버 아키텍처 가이드",
+      "uri": "internal://architecture.md"
+    }
+  ],
+  "templates": [
+    {
+      "name": "기본 퍼징 설정",
+      "description": "AFL++ 퍼징을 위한 기본 설정 템플릿",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "target_binary": {
+            "type": "string",
+            "description": "퍼징할 바이너리 파일 경로"
+          },
+          "input_dir": {
+            "type": "string",
+            "description": "입력 파일 디렉토리 경로"
+          }
+        },
+        "required": ["target_binary", "input_dir"]
+      }
+    }
+  ],
   "capabilities": {
     "tools": {
       "listChanged": true
@@ -170,6 +342,8 @@
     "prompts": {
       "listChanged": false
     },
-    "logging": {}
+    "logging": {
+      "level": "info"
+    }
   }
 }
