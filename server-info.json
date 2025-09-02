@@ -1,16 +1,34 @@
 {
-  "name": "seoul-weather-server",
+  "name": "afl-plus-plus-server",
   "instructions": null,
   "fastmcp_version": "2.11.3",
   "mcp_version": "1.13.1",
   "server_version": null,
   "tools": [
     {
-      "key": "get_seoul_weather",
-      "name": "get_seoul_weather",
-      "description": "서울의 현재 날씨 정보를 가져옵니다.",
+      "key": "start_afl_fuzzing",
+      "name": "start_afl_fuzzing",
+      "description": "AFL++ 퍼징을 시작합니다.",
       "input_schema": {
-        "properties": {},
+        "properties": {
+          "target_binary": {
+            "title": "Target Binary",
+            "type": "string"
+          },
+          "input_dir": {
+            "title": "Input Dir",
+            "type": "string"
+          },
+          "output_dir": {
+            "default": null,
+            "title": "Output Dir",
+            "type": "string"
+          }
+        },
+        "required": [
+          "target_binary",
+          "input_dir"
+        ],
         "type": "object"
       },
       "annotations": null,
@@ -18,11 +36,19 @@
       "enabled": true
     },
     {
-      "key": "get_seoul_forecast",
-      "name": "get_seoul_forecast",
-      "description": "서울의 5일 날씨 예보를 가져옵니다.",
+      "key": "get_fuzzing_status",
+      "name": "get_fuzzing_status",
+      "description": "현재 퍼징 상태를 확인합니다.",
       "input_schema": {
-        "properties": {},
+        "properties": {
+          "output_dir": {
+            "title": "Output Dir",
+            "type": "string"
+          }
+        },
+        "required": [
+          "output_dir"
+        ],
         "type": "object"
       },
       "annotations": null,
@@ -30,9 +56,97 @@
       "enabled": true
     },
     {
-      "key": "get_weather_tip",
-      "name": "get_weather_tip",
-      "description": "현재 날씨에 맞는 생활 팁을 제공합니다.",
+      "key": "analyze_fuzzing_results",
+      "name": "analyze_fuzzing_results",
+      "description": "퍼징 결과를 분석합니다.",
+      "input_schema": {
+        "properties": {
+          "output_dir": {
+            "title": "Output Dir",
+            "type": "string"
+          }
+        },
+        "required": [
+          "output_dir"
+        ],
+        "type": "object"
+      },
+      "annotations": null,
+      "tags": null,
+      "enabled": true
+    },
+    {
+      "key": "analyze_crash_file",
+      "name": "analyze_crash_file",
+      "description": "특정 크래시 파일을 분석합니다.",
+      "input_schema": {
+        "properties": {
+          "output_dir": {
+            "title": "Output Dir",
+            "type": "string"
+          },
+          "crash_id": {
+            "title": "Crash Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "output_dir",
+          "crash_id"
+        ],
+        "type": "object"
+      },
+      "annotations": null,
+      "tags": null,
+      "enabled": true
+    },
+    {
+      "key": "reproduce_crash",
+      "name": "reproduce_crash",
+      "description": "크래시를 재현합니다.",
+      "input_schema": {
+        "properties": {
+          "target_binary": {
+            "title": "Target Binary",
+            "type": "string"
+          },
+          "crash_file": {
+            "title": "Crash File",
+            "type": "string"
+          }
+        },
+        "required": [
+          "target_binary",
+          "crash_file"
+        ],
+        "type": "object"
+      },
+      "annotations": null,
+      "tags": null,
+      "enabled": true
+    },
+    {
+      "key": "stop_fuzzing",
+      "name": "stop_fuzzing",
+      "description": "퍼징을 중지합니다.",
+      "input_schema": {
+        "properties": {
+          "process_id": {
+            "default": null,
+            "title": "Process Id",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "annotations": null,
+      "tags": null,
+      "enabled": true
+    },
+    {
+      "key": "list_fuzzing_processes",
+      "name": "list_fuzzing_processes",
+      "description": "현재 실행 중인 AFL++ 프로세스를 나열합니다.",
       "input_schema": {
         "properties": {},
         "type": "object"
